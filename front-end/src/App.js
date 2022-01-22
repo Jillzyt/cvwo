@@ -4,10 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
-import {
-  grey,
-  orange,
-} from "@mui/material/colors";
+import { red, grey, orange } from "@mui/material/colors";
 import Signup from "./views/Signup";
 import Login from "./views/Login";
 import TodoPage from "./components/TodoPage";
@@ -16,11 +13,17 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Create color mode context
 function ToggleColorMode() {
-  const [mode, setMode] = React.useState("light");
+  const [mode, setMode] = React.useState(
+    localStorage.getItem("mode") === "light" ? "light" : "dark"
+  );
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+        setMode((prevMode) => {
+          const newMode = prevMode === "light" ? "dark" : "light";
+          localStorage.setItem("mode", newMode);
+          return newMode;
+        });
       },
     }),
     []
@@ -29,19 +32,6 @@ function ToggleColorMode() {
   const theme = React.useMemo(
     () =>
       createTheme({
-        // components: {
-        //   MuiButton: {
-        //     variants: [
-        //       {
-        //         props: { variant: "normalButton" },
-        //         style: {
-        //           backgroundColor: orange[50],
-        //           boxShadow: 3,
-        //         },
-        //       },
-        //     ],
-        //   },
-        // },
         palette: {
           mode,
           ...(mode === "light"
@@ -88,6 +78,11 @@ function ToggleColorMode() {
                 },
               }),
         },
+        error: {
+          "&.MuiFormHelperText-root.Mui-error": {
+            color: red[500],
+          },
+        },
       }),
     [mode]
   );
@@ -115,8 +110,8 @@ function App() {
         <Navbar onClick={colorMode.toggleColorMode} theme={theme} />
         <Routes>
           <Route exact path="/" element={<NormalRoute />} />
-          <Route exact path='/protected_route' element={<ProtectedRoute/>}>
-            <Route exact path='/protected_route' element={<TodoPage/>}/>
+          <Route exact path="/protected_route" element={<ProtectedRoute />}>
+            <Route exact path="/protected_route" element={<TodoPage />} />
           </Route>
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/login" element={<Login />} />

@@ -31,7 +31,7 @@ class UsersController < ApplicationController
   
   
     # CHECK CREDENTIALS
-    def login
+    def check_credentials
     @user = User.find_by(email: params[:email])
 
       if @user && @user.authenticate(params[:password])

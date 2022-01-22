@@ -1,29 +1,28 @@
 // src/components/auth/Logout.js
 import React from "react";
-import { connect } from "react-redux";
-import { logoutUser } from "../../actions/auth";
 import { useNavigate } from "react-router-dom";
 import { MenuItem } from "@mui/material";
 import { Typography } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../features/auth/authsSlice";
+import { Button } from "@mui/material";
+import { clearTodo } from "../../features/todos/todosSlice";
 
-const Logout = ({ dispatchLogoutUser }) => {
+const Logout = () => {
   let navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClick = () => {
-    dispatchLogoutUser().then(() => navigate("/"));
+    dispatch(logoutUser());
+    dispatch(clearTodo());
+    navigate("/");
   };
 
   return (
-    <MenuItem key={"logout"} onClick={handleClick}>
-      <Typography textAlign="center">Logout</Typography>
-    </MenuItem>
+    <Button onClick={handleClick} color="secondary">
+      Log out
+    </Button>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatchLogoutUser: () => dispatch(logoutUser()),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(Logout);
+export default Logout;

@@ -8,13 +8,12 @@ import Main from "./Main";
 export default function TodoPage() {
   return (
     <React.Fragment>
-     <Header title="Blog" />
+      <Header title="Blog" />
       <Container maxWidth="lg">
-          <Grid container spacing={5} sx={{ mt: 3 }}>
-            <Main title="From the firehose" />
-          </Grid>
+        <Grid container spacing={5} sx={{ mt: 3 }}>
+          <Main title="From the firehose" />
+        </Grid>
       </Container>{" "}
     </React.Fragment>
   );
 }
-

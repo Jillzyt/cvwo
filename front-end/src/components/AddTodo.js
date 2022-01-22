@@ -1,42 +1,75 @@
-import React from "react";
-import { connect } from "react-redux";
-import { addTodo } from "../actions/todos";
+import React, { useState } from "react";
 import { TextField } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { saveNewTodo } from "../features/todos/todosSlice";
+import ChipsArray from "./Chip";
 import { Button } from "@mui/material";
+import { restartState } from "../features/filters/filtersSlice";
 
-class AddTodo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { input: "" };
-  }
+const AddTodo = () => {
+  const [text, setText] = useState("");
+  const [tag_list, setTagList] = useState("");
+  const [status, setStatus] = useState("idle");
+  const dispatch = useDispatch();
 
-  updateInput = (input) => {
-    this.setState({ input });
+  const handleText = (e) => setText(e.target.value);
+  const handleTags = (e) => setTagList(e.target.value);
+
+  const onClick = async (e) => {
+    // If the user pressed the Enter key:
+    const trimmedText = text.trim();
+    const trimmedTagList = tag_list
+      .replace(" ,", ",")
+      .replace(", ", ",")
+      .trim();
+    console.log("trimmedlIST " + trimmedTagList);
+    const object = {
+      text: trimmedText,
+      tag_list: trimmedTagList,
+    };
+    if (trimmedText) {
+      // Create and dispatch the thunk function itself
+      setStatus("loading");
+      await dispatch(saveNewTodo(object));
+      dispatch(restartState());
+      // And clear out the text input
+      setText("");
+      setTagList("");
+      setStatus("idle");
+    }
   };
 
-  handleAddTodo = () => {
-    this.props.addTodo(this.state.input);
-    this.setState({ input: "" });
-  };
+  let isLoading = status === "loading";
+  let placeholder = isLoading ? "" : "What needs to be done?";
+  let loader = isLoading ? <div className="loader" /> : null;
 
-  render() {
-    return (
-      <React.Fragment>
-        <div style={{padding:"10px"}}>
-        <TextField id="standard-basic"
-            variant="standard"
-            onChange={(e) => this.updateInput(e.target.value)}
-            value={this.state.input}
-            style={{padding:"5px"}}
+  return (
+    <React.Fragment>
+      <div style={{ padding: "10px" }}>
+        <TextField
+          id="standard-basic"
+          variant="standard"
+          placeholder={placeholder}
+          value={text}
+          onChange={handleText}
+          disabled={isLoading}
+          style={{ padding: "5px" }}
         />
-        <Button onClick={this.handleAddTodo} color="secondary" variant="outlined">
-          Add Todo
+        <TextField
+          id="asdfasdf"
+          variant="standard"
+          placeholder={"tags"}
+          value={tag_list}
+          onChange={handleTags}
+          disabled={isLoading}
+          style={{ padding: "5px" }}
+        />
+        <Button color="secondary" variant="contained" onClick={onClick}>
+          {"Add Todo"}
         </Button>
-        </div>
-      </React.Fragment>
-    );
-  }
-}
+      </div>
+    </React.Fragment>
+  );
+};
 
-export default connect(null, { addTodo })(AddTodo);
-// export default AddTodo;
+export default AddTodo;

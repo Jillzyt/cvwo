@@ -1,4 +1,5 @@
-import * as React from "react";
+import React from "react";
+import { useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,19 +12,54 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import Brightness4Icon from "@material-ui/icons/Brightness4";
 import Brightness7Icon from "@material-ui/icons/Brightness7";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import Logout from "./auth/Logout";
+import { useSelector } from "react-redux";
+import { fetchTodos } from "../features/todos/todosSlice";
+import { reLoginUser } from "../features/auth/authsSlice";
 
-const settings = [{"name":"Profile", "route": "/profile"}, {"name":"Account", "route": "account"}];
+const settings = [
+  { name: "Profile", route: "/profile" },
+  { name: "Account", route: "account" },
+];
 
-const Navbar = ({ authChecked, loggedIn, currentUser, onClick, theme }) => {
+function stringToColor(string) {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.substr(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+function stringAvatar(name) {
+  return {
+    sx: {
+      bgcolor: stringToColor(name ? name : "L"),
+    },
+    children: name ? name[0] : "L",
+  };
+}
+
+const Navbar = ({ loggedIn, onClick, theme }) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [auth, setAuth] = React.useState(true);
+  const [anchorElUser, setAnchorElUser] = React.useState(false);
   const [currentTheme, setTheme] = React.useState(theme);
+  const user = useSelector((state) => state.auth.user);
   let navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
@@ -80,48 +116,14 @@ const Navbar = ({ authChecked, loggedIn, currentUser, onClick, theme }) => {
                 <Brightness4Icon />
               )}
             </IconButton>
-            {!loggedIn && (
+            {!user && (
               <React.Fragment>
                 <Button component={Link} color="secondary" to="/login">
                   Log In
                 </Button>
               </React.Fragment>
             )}{" "}
-            {loggedIn && (
-              <React.Fragment>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src="/static/images/avatar/2.jpg"
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting.name} onClick={() => {navigate(setting.route)}}>
-                      <Typography textAlign="center">{setting.name}</Typography>
-                    </MenuItem>
-                  ))}
-                  <Logout></Logout>
-                </Menu>
-              </React.Fragment>
-            )}
+            {user && <Logout></Logout>}
           </Box>
         </Toolbar>
       </Container>

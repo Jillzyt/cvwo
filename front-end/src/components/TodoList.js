@@ -1,43 +1,32 @@
-import React from "react";
-import { connect } from "react-redux";
+import React, { useEffect } from "react";
 import Todo from "./Todo";
 // import { getTodos } from "../redux/selectors";
-import { getTodosByVisibilityFilter } from "../redux/selectors";
-import { VISIBILITY_FILTERS } from "../constants";
 import { Grid } from "@mui/material";
+import { useSelector } from "react-redux";
 
-const TodoList = ({ todos }) => (
+import { selectFilteredTodoIds } from "../features/todos/todosSlice";
+
+const TodoList = () => {
+  const todoIds = useSelector(selectFilteredTodoIds);
+  const loadingStatus = useSelector((state) => state.todos.status);
+
+  if (loadingStatus === "loading") {
+    return (
+      <div className="todo-list">
+        <div className="loader" />
+      </div>
+    );
+  }
+
+  const renderedListItems = todoIds.map((todoId) => {
+    return <Todo key={todoId} id={todoId} />;
+  });
+
+  return (
     <Grid className="todo-list">
-    {todos && todos.length
-    ? todos.map((todo, index) => {
-        return <Todo key={`todo-${todo.id}`} todo={todo} />;
-        })
-    : "No todos, yay!"}
+      {todoIds ? renderedListItems : "No todos, yay!"}
     </Grid>
-);
-
-// const mapStateToProps = state => {
-//   const { byIds, allIds } = state.todos || {};
-//   const todos =
-//     allIds && state.todos.allIds.length
-//       ? allIds.map(id => (byIds ? { ...byIds[id], id } : null))
-//       : null;
-//   return { todos };
-// };
-
-const mapStateToProps = (state) => {
-  const { visibilityFilter } = state;
-  const todos = getTodosByVisibilityFilter(state, visibilityFilter);
-  return { todos };
-  //   const allTodos = getTodos(state);
-  //   return {
-  //     todos:
-  //       visibilityFilter === VISIBILITY_FILTERS.ALL
-  //         ? allTodos
-  //         : visibilityFilter === VISIBILITY_FILTERS.COMPLETED
-  //           ? allTodos.filter(todo => todo.completed)
-  //           : allTodos.filter(todo => !todo.completed)
-  //   };
+  );
 };
-// export default TodoList;
-export default connect(mapStateToProps)(TodoList);
+
+export default TodoList;

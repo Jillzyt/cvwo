@@ -1,10 +1,18 @@
-// src/store.js
-import { createStore, applyMiddleware } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-import thunk from "redux-thunk";
-import rootReducer from "../reducers";
+import { configureStore } from "@reduxjs/toolkit";
 
-export default createStore(
-  rootReducer,
-  composeWithDevTools(applyMiddleware(thunk))
-);
+import todosReducer from "../features/todos/todosSlice";
+import filtersReducer from "../features/filters/filtersSlice";
+import authReducer from "../features/auth/authsSlice";
+import messageReducer from "../features/message/messageSlice";
+
+const store = configureStore({
+  reducer: {
+    // Define a top-level state field named `todos`, handled by `todosReducer`
+    todos: todosReducer,
+    filters: filtersReducer,
+    auth: authReducer,
+    mesasge: messageReducer,
+  },
+});
+
+export default store;
