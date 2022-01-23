@@ -9,6 +9,8 @@ export const StatusFilters = {
 const initialState = {
   status: StatusFilters.All,
   tags: [],
+  search: true,
+  searchText: "",
 };
 
 const filtersSlice = createSlice({
@@ -21,6 +23,20 @@ const filtersSlice = createSlice({
     restartState(state, action) {
       state.status = StatusFilters.All;
       state.tags = [];
+      state.search = false;
+      state.searchText = "";
+    },
+    searchChanged: {
+      reducer(state, action) {
+        let { search, changeType } = action.payload;
+        state.searchText = changeType === "searched" ? search : "";
+        state.search = changeType === "searched" ? true : false;
+      },
+      prepare(search, changeType) {
+        return {
+          payload: { search, changeType },
+        };
+      },
     },
     tagFilterChanged: {
       reducer(state, action) {
@@ -52,7 +68,11 @@ const filtersSlice = createSlice({
   },
 });
 
-export const { tagFilterChanged, statusFilterChanged, restartState } =
-  filtersSlice.actions;
+export const {
+  tagFilterChanged,
+  statusFilterChanged,
+  restartState,
+  searchChanged,
+} = filtersSlice.actions;
 
 export default filtersSlice.reducer;

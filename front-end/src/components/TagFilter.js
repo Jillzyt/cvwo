@@ -41,7 +41,7 @@ export default function Tags() {
   };
 
   return (
-    <Stack spacing={3} sx={{ width: 500 }}>
+    <Stack spacing={3}>
       <Autocomplete
         multiple
         id="tags-standard"
@@ -53,24 +53,19 @@ export default function Tags() {
           setChipData(newValue);
           handleKeyDown(event, newValue);
         }}
-        renderTags={(value, getTagProps) =>
-          value.map((option, index) => (
+        renderTags={(values, getTagProps) =>
+          values.map((option, index) => (
             <Chip
               label={"#" + option}
               onDelete={() => {
-                setChipData(value.filter((company) => company !== option));
+                setChipData(values.filter((value) => value !== option));
                 handleDelete(option);
               }}
             />
           ))
         }
         renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="filled"
-            color="secondary"
-            label="Filter tags"
-          />
+          <TextField {...params} variant="filled" color="secondary" />
         )}
       />
     </Stack>

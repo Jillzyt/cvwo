@@ -20,6 +20,7 @@ export default function ChipsArray({ chips }) {
         return (
           <Chip
             label={"#" + data}
+            style={{ margin: "1%" }}
             // onDelete={data === 'React' ? undefined : handleDelete(data)}
           />
         );

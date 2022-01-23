@@ -136,9 +136,9 @@ export const selectFilteredTodos = createSelector(
   (state) => state.filters,
   // Output selector: receives both values
   (todos, filters) => {
-    const { status, tags } = filters;
+    const { status, tags, search, searchText } = filters;
     const showAllCompletions = status === StatusFilters.All;
-    if (showAllCompletions && tags.length === 0) {
+    if (showAllCompletions && tags.length === 0 && status === false) {
       return todos;
     }
 
@@ -149,7 +149,9 @@ export const selectFilteredTodos = createSelector(
         showAllCompletions || todo.status === completedStatus;
       const tagMatches =
         tags.length === 0 || tags.every((ai) => todo.tag_list.includes(ai));
-      return statusMatches && tagMatches;
+      const searchMatches =
+        search === false || todo.description.includes(searchText);
+      return statusMatches && tagMatches && searchMatches;
     });
   }
 );

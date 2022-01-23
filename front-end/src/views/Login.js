@@ -18,6 +18,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import { fetchTodos } from "../features/todos/todosSlice";
 import { addMessage } from "../features/message/messageSlice";
+
 const validateEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -45,7 +46,7 @@ function Login() {
       dispatch(reLoginUser()).then((result) => {
         if (result.status === true) {
           console.log(result);
-          navigate("/protected_route");
+          navigate("/todolist");
         }
       });
     });
@@ -119,7 +120,7 @@ function Login() {
         } else {
           dispatch(fetchTodos()).then(() => {
             dispatch(addMessage("Login successful"));
-            navigate("/protected_route");
+            navigate("/todolist");
           });
         }
       })

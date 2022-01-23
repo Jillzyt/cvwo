@@ -5,7 +5,7 @@ import { saveNewTodo } from "../features/todos/todosSlice";
 import ChipsArray from "./Chip";
 import { Button } from "@mui/material";
 import { restartState } from "../features/filters/filtersSlice";
-
+import { Grid } from "@mui/material";
 const AddTodo = () => {
   const [text, setText] = useState("");
   const [tag_list, setTagList] = useState("");
@@ -46,27 +46,41 @@ const AddTodo = () => {
   return (
     <React.Fragment>
       <div style={{ padding: "10px" }}>
-        <TextField
-          id="standard-basic"
-          variant="standard"
-          placeholder={placeholder}
-          value={text}
-          onChange={handleText}
-          disabled={isLoading}
-          style={{ padding: "5px" }}
-        />
-        <TextField
-          id="asdfasdf"
-          variant="standard"
-          placeholder={"tags"}
-          value={tag_list}
-          onChange={handleTags}
-          disabled={isLoading}
-          style={{ padding: "5px" }}
-        />
-        <Button color="secondary" variant="contained" onClick={onClick}>
-          {"Add Todo"}
-        </Button>
+        <Grid container direction="row">
+          <Grid container item xs={12} md={12} lg={4}>
+            <TextField
+              placeholder={placeholder}
+              value={text}
+              fullWidth
+              onChange={handleText}
+              disabled={isLoading}
+              label="Description"
+              style={{ padding: "5px" }}
+            />
+          </Grid>
+          <Grid container item xs={12} md={12} lg={4}>
+            <TextField
+              value={tag_list}
+              onChange={handleTags}
+              disabled={isLoading}
+              label="Tags"
+              fullWidth
+              style={{ padding: "5px" }}
+              helperText="Tags are seperated by a comma ,"
+            />
+          </Grid>
+          <Grid container item xs={12} md={12} lg={4}>
+            <Button
+              style={{ height: "75%" }}
+              color="secondary"
+              variant="contained"
+              fullWidth
+              onClick={onClick}
+            >
+              {"Add Todo"}
+            </Button>
+          </Grid>
+        </Grid>
       </div>
     </React.Fragment>
   );

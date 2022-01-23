@@ -7,7 +7,7 @@ import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import { red, grey, orange } from "@mui/material/colors";
 import Signup from "./views/Signup";
 import Login from "./views/Login";
-import TodoPage from "./components/TodoPage";
+import TodoPage from "./views/TodoPage";
 import NormalRoute from "./components/NormalRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -110,8 +110,8 @@ function App() {
         <Navbar onClick={colorMode.toggleColorMode} theme={theme} />
         <Routes>
           <Route exact path="/" element={<NormalRoute />} />
-          <Route exact path="/protected_route" element={<ProtectedRoute />}>
-            <Route exact path="/protected_route" element={<TodoPage />} />
+          <Route exact path="/todolist" element={<ProtectedRoute />}>
+            <Route exact path="/todolist" element={<TodoPage />} />
           </Route>
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/login" element={<Login />} />

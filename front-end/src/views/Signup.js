@@ -30,7 +30,7 @@ function Login() {
       dispatch(reLoginUser()).then((result) => {
         if (result.status === true) {
           console.log(result);
-          navigate("/protected_route");
+          navigate("/todolist");
         }
       });
     });
@@ -40,7 +40,7 @@ function Login() {
     dispatch(registerUser({ email, password }))
       .then(() => {
         dispatch(addMessage("Login successful"));
-        navigate("/protected_route");
+        navigate("/todolist");
       })
       .catch(() => setError(true));
   };

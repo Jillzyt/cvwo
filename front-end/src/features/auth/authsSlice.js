@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-
 const user = localStorage.getItem("token");
-
 const initialState = {
   status: "idle",
   user: user ? user : null,
