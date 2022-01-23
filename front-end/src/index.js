@@ -21,11 +21,11 @@ function select(state) {
 let currentValue;
 function handleChange() {
   let previousValue = currentValue;
-  console.log(store.getState());
+  // console.log(store.getState());
   currentValue = select(store.getState());
 
   if (previousValue !== currentValue) {
-    console.log("here");
+    // console.log("here");
     store.dispatch(fetchTodos());
   }
 }

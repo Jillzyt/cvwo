@@ -17,11 +17,31 @@ import { addMessage } from "../features/message/messageSlice";
 import { registerUser } from "../features/auth/authsSlice";
 import { useDispatch } from "react-redux";
 import { reLoginUser } from "../features/auth/authsSlice";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import IconButton from "@mui/material/IconButton";
+
+
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [values, setValues] = React.useState({
+    showPassword: false,
+    passwordError: false,
+    passwordHelper: "",
+    email: false,
+    emailHelper: "",
+  });
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -29,20 +49,88 @@ function Login() {
     useEffect(() => {
       dispatch(reLoginUser()).then((result) => {
         if (result.status === true) {
-          console.log(result);
+          // console.log(result);
           navigate("/todolist");
         }
       });
     });
   }
+
+  const handleClickShowPassword = () => {
+    setValues({
+      ...values,
+      showPassword: !values.showPassword,
+    });
+  };
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  const validate = () => {
+    if (email.length === 0 && email.length === 0) {
+      setValues({
+        ...values,
+        emailError: true,
+        emailHelper: "Email is required",
+
+        passwordError: true,
+        passwordHelper: "Password is required",
+      });
+      return false;
+    }
+    if (email.length === 0) {
+      setValues({
+        ...values,
+        emailError: true,
+        emailHelper: "Email is required",
+      });
+      return false;
+    }
+
+    if (!validateEmail(email)) {
+      setValues({
+        ...values,
+        emailError: true,
+        emailHelper: "Invalid email",
+      });
+      return false;
+    }
+    if (password.length === 0) {
+      setValues({
+        ...values,
+        passwordError: true,
+        passwordHelper: "Password is required",
+      });
+      return false;
+    }
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (validate() === false) {
+      return;
+    }
     dispatch(registerUser({ email, password }))
-      .then(() => {
-        dispatch(addMessage("Login successful"));
-        navigate("/todolist");
+      .then((status) => {
+        // console.log(status.payload);
+        if (status.payload === false) {
+          setValues({
+            ...values,
+            emailError: true,
+            emailHelper: "Your email may be taken",
+          });
+        } else {
+          dispatch(fetchTodos()).then(() => {
+            dispatch(addMessage("Login successful"));
+            navigate("/todolist");
+          });
+        }
       })
-      .catch(() => setError(true));
+      .catch(() =>
+        setValues({
+          ...values,
+          emailError: true,
+          emailHelper: "Your email may be taken",
+        })
+      );
   };
 
   return (
@@ -69,6 +157,7 @@ function Login() {
             sx={{ mt: 1 }}
           >
             <TextField
+              required
               margin="normal"
               required
               fullWidth
@@ -76,9 +165,13 @@ function Login() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              helperText="Incorrect entry."
               autoFocus
+              error={values.emailError}
+              helperText={values.emailHelper}
               onChange={(event) => setEmail(event.target.value)}
               value={email}
+              inputProps={{ inputMode: "email", pattern: "[0-9]*" }}
             />
             <TextField
               margin="normal"
@@ -88,13 +181,27 @@ function Login() {
               label="Password"
               type="password"
               id="password"
+              color="primary"
+              error={values.passwordError}
               autoComplete="current-password"
               onChange={(value) => setPassword(event.target.value)}
+              type={values.showPassword ? "text" : "password"}
               value={password}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="secondary" />}
-              label="Remember me"
+              helperText={values.passwordHelper}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Button
               type="submit"

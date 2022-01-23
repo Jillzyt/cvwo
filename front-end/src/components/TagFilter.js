@@ -11,7 +11,7 @@ const retrieveTagList = (todos) => {
   for (let x in todos) {
     string += todos[x].tag_list + ",";
   }
-  console.log(string);
+  // console.log(string);
   return string.split(",");
 };
 

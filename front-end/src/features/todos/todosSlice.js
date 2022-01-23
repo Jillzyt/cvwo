@@ -15,7 +15,9 @@ const initialState = todosAdapter.getInitialState({
 
 // Thunk functions
 export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
-  const response = await client.get("http://localhost:4000/todos");
+  const response = await client.get(
+    process.env.REACT_APP_API_CLIENT + "/todos"
+  );
   return response;
 });
 
@@ -28,7 +30,7 @@ export const saveNewTodo = createAsyncThunk(
       tag_list: object.tag_list,
     };
     const response = await client.post(
-      "http://localhost:4000/todos",
+      process.env.REACT_APP_API_CLIENT + "/todos",
       initialTodo
     );
     return response;
@@ -37,14 +39,16 @@ export const saveNewTodo = createAsyncThunk(
 
 export const completeTodo = createAsyncThunk("todos/complete", async (id) => {
   const response = await client.post(
-    "http://localhost:4000/todos/complete/" + id,
+    process.env.REACT_APP_API_CLIENT + "/todos/complete/" + id,
     {}
   );
   return response;
 });
 
 export const deleteTodo = createAsyncThunk("todos/delete", async (id) => {
-  const response = await client.delete("http://localhost:4000/todos/" + id);
+  const response = await client.delete(
+    process.env.REACT_APP_API_CLIENT + "/todos/" + id
+  );
   return id;
 });
 

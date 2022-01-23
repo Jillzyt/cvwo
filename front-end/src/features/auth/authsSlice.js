@@ -7,7 +7,7 @@ const initialState = {
 };
 
 export const reLoginUser = createAsyncThunk("auth/relogin", async () => {
-  return await fetch("http://localhost:4000/auto_login", {
+  return await fetch(process.env.REACT_APP_API_CLIENT + "/auto_login", {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -28,7 +28,7 @@ export const reLoginUser = createAsyncThunk("auth/relogin", async () => {
 });
 
 export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
-  return await fetch("http://localhost:4000/login", {
+  return await fetch(process.env.REACT_APP_API_CLIENT + "/login", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -52,7 +52,7 @@ export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (credentials) => {
-    return await fetch("http://localhost:4000/register", {
+    return await fetch(process.env.REACT_APP_API_CLIENT + "/register", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -68,7 +68,7 @@ export const registerUser = createAsyncThunk(
       } else {
         return res.json().then((errors) => {
           useDispatch(addMessage(errors));
-          return null;
+          return false;
         });
       }
     });

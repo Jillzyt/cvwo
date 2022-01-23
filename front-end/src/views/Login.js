@@ -45,7 +45,7 @@ function Login() {
     useEffect(() => {
       dispatch(reLoginUser()).then((result) => {
         if (result.status === true) {
-          console.log(result);
+          // console.log(result);
           navigate("/todolist");
         }
       });
@@ -108,14 +108,14 @@ function Login() {
     }
     dispatch(loginUser({ email, password }))
       .then((status) => {
-        console.log(status.payload);
+        // console.log(status.payload);
         if (status.payload === false) {
           setValues({
             ...values,
-            passwordError: true,
             emailError: true,
-            emailHelper: "Check your email again",
-            passwordHelper: "Check your password again",
+            emailHelper: "Check your email",
+            passwordError: true,
+            passwordHelper: "Check your password",
           });
         } else {
           dispatch(fetchTodos()).then(() => {
@@ -127,10 +127,10 @@ function Login() {
       .catch(() =>
         setValues({
           ...values,
-          passwordError: true,
           emailError: true,
-          emailHelper: "Check your email again",
-          passwordHelper: "Check your password again",
+          emailHelper: "Check your email",
+          passwordError: true,
+          passwordHelper: "Check your password",
         })
       );
   };

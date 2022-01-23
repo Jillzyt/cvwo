@@ -22,7 +22,7 @@ const AddTodo = () => {
       .replace(" ,", ",")
       .replace(", ", ",")
       .trim();
-    console.log("trimmedlIST " + trimmedTagList);
+    // console.log("trimmedlIST " + trimmedTagList);
     const object = {
       text: trimmedText,
       tag_list: trimmedTagList,

@@ -104,7 +104,7 @@ function App() {
   const colorMode = React.useContext(ColorModeContext);
 
   return (
-    <div>
+    <div style={{height:"100%"}}>
       <CssBaseline /> {/* This is to reset css baseline */}
       <Router>
         <Navbar onClick={colorMode.toggleColorMode} theme={theme} />
