@@ -11,7 +11,7 @@ const store = configureStore({
     todos: todosReducer,
     filters: filtersReducer,
     auth: authReducer,
-    mesasge: messageReducer,
+    message: messageReducer,
   },
 });
 

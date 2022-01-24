@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import BIRDS from "vanta/dist/vanta.birds.min";
-// Make sure window.THREE is defined, e.g. by including three.min.js in the document head using a <script> tag
 import { Grid, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 const height = window.innerHeight;
-const NormalRoute = (props) => {
+const NormalRoute = () => {
   const [vantaEffect, setVantaEffect] = useState(null);
   const myRef = useRef(null);
+  const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!vantaEffect) {
       setVantaEffect(
@@ -28,24 +33,33 @@ const NormalRoute = (props) => {
     setVantaEffect(vantaEffect.resize());
   }
   return (
-  <div style={{height:"100%", backgroundColor:"#f5f5f5"}}>
-    <div ref={myRef}>
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        backgroundColor="0xf5f5f5"
-        style={{ minHeight: height * 0.841 }}
-      >
-        <Grid item xs={3}>
-          <Typography color="black" variant="h3">
-            Please log in.
-          </Typography>
+    <div style={{ height: "100%", backgroundColor: "#f5f5f5" }}>
+      <div ref={myRef}>
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          backgroundColor="0xf5f5f5"
+          style={{ minHeight: height * 0.841 }}
+        >
+          <Grid item xs={3}>
+            <Typography color="black" variant="h3">
+              {!user && "Please log in."}
+              {user && (
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/todolist")}
+                >
+                  {" "}
+                  Go to-do app
+                </Button>
+              )}
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </div>
     </div>
   );
 };

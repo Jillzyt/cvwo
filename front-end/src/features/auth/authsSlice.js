@@ -62,12 +62,12 @@ export const registerUser = createAsyncThunk(
     }).then((res) => {
       if (res.ok) {
         return res.json().then((user) => {
+          console.log(user);
           localStorage.setItem("token", user.token);
           return user;
         });
       } else {
         return res.json().then((errors) => {
-          useDispatch(addMessage(errors));
           return false;
         });
       }

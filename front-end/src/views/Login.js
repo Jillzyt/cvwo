@@ -1,6 +1,6 @@
 // src/components/auth/Login.js
 import { Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -11,26 +11,21 @@ import LockOutlined from "@material-ui/icons/LockOutlined";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loginUser, reLoginUser } from "../features/auth/authsSlice";
+import { loginUser } from "../features/auth/authsSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import { fetchTodos } from "../features/todos/todosSlice";
 import { addMessage } from "../features/message/messageSlice";
-
-const validateEmail = (email) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-};
+import LoadingSpinner from "../components/LoadingSpinner";
+import { TYPES_OF_MESSAGES } from "../features/message/messagesConstants";
+import { validate } from "../helpers/validateFields";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [isSubmitting, setSubmitStatus] = useState(false);
   const [values, setValues] = React.useState({
     showPassword: false,
     passwordError: false,
@@ -40,7 +35,6 @@ function Login() {
   });
   const dispatch = useDispatch();
   let navigate = useNavigate();
-
 
   const handleClickShowPassword = () => {
     setValues({
@@ -53,49 +47,15 @@ function Login() {
     event.preventDefault();
   };
 
-  const validate = () => {
-    if (email.length === 0 && email.length === 0) {
-      setValues({
-        ...values,
-        emailError: true,
-        emailHelper: "Email is required",
-
-        passwordError: true,
-        passwordHelper: "Password is required",
-      });
-      return false;
-    }
-    if (email.length === 0) {
-      setValues({
-        ...values,
-        emailError: true,
-        emailHelper: "Email is required",
-      });
-      return false;
-    }
-
-    if (!validateEmail(email)) {
-      setValues({
-        ...values,
-        emailError: true,
-        emailHelper: "Invalid email",
-      });
-      return false;
-    }
-    if (password.length === 0) {
-      setValues({
-        ...values,
-        passwordError: true,
-        passwordHelper: "Password is required",
-      });
-      return false;
-    }
-  };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (validate() === false) {
+    setSubmitStatus(true);
+    if (validate(setValues, email, password, values) === false) {
+      setSubmitStatus(false);
       return;
     }
+    dispatch(addMessage(TYPES_OF_MESSAGES.LOGGING_USER));
+
     dispatch(loginUser({ email, password }))
       .then((status) => {
         // console.log(status.payload);
@@ -107,22 +67,24 @@ function Login() {
             passwordError: true,
             passwordHelper: "Check your password",
           });
+          dispatch(addMessage(TYPES_OF_MESSAGES.LOGIN_FAILED));
+          setSubmitStatus(false);
         } else {
-          dispatch(fetchTodos()).then(() => {
-            dispatch(addMessage("Login successful"));
-            navigate("/todolist");
-          });
+          dispatch(addMessage(TYPES_OF_MESSAGES.LOGIN_SUCCESSFUL));
+          navigate("/");
         }
       })
-      .catch(() =>
+      .catch(() => {
         setValues({
           ...values,
           emailError: true,
           emailHelper: "Check your email",
           passwordError: true,
           passwordHelper: "Check your password",
-        })
-      );
+        });
+        dispatch(addMessage(TYPES_OF_MESSAGES.LOGIN_FAILED));
+        setSubmitStatus(false);
+      });
   };
 
   return (
@@ -157,8 +119,8 @@ function Login() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              helperText="Incorrect entry."
               autoFocus
+              disabled={isSubmitting}
               error={values.emailError}
               helperText={values.emailHelper}
               onChange={(event) => setEmail(event.target.value)}
@@ -174,6 +136,7 @@ function Login() {
               type="password"
               id="password"
               color="primary"
+              disabled={isSubmitting}
               error={values.passwordError}
               autoComplete="current-password"
               onChange={(value) => setPassword(event.target.value)}
@@ -195,20 +158,18 @@ function Login() {
                 ),
               }}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Log In
-            </Button>
+            {!isSubmitting && (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Log In
+              </Button>
+            )}
+            {isSubmitting && <LoadingSpinner />}
             <Grid container>
-              {/* <Grid item xs>
-                <Link href="#" color="secondary" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid> */}
               <Grid item>
                 <Link href="/signup" color="secondary" variant="body2">
                   {"Don't have an account? Sign Up"}

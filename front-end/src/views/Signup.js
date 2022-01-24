@@ -1,12 +1,9 @@
 // src/components/auth/Signup.js
 import { Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -16,25 +13,19 @@ import { useNavigate } from "react-router-dom";
 import { addMessage } from "../features/message/messageSlice";
 import { registerUser } from "../features/auth/authsSlice";
 import { useDispatch } from "react-redux";
-import { reLoginUser } from "../features/auth/authsSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
-
-
-const validateEmail = (email) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-};
+import { TYPES_OF_MESSAGES } from "../features/message/messagesConstants";
+import { validate } from "../helpers/validateFields";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { fetchTodos } from "../features/todos/todosSlice";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [isSubmitting, setSubmitStatus] = useState(false);
   const [values, setValues] = React.useState({
     showPassword: false,
     passwordError: false,
@@ -54,72 +45,41 @@ function Login() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const validate = () => {
-    if (email.length === 0 && email.length === 0) {
-      setValues({
-        ...values,
-        emailError: true,
-        emailHelper: "Email is required",
 
-        passwordError: true,
-        passwordHelper: "Password is required",
-      });
-      return false;
-    }
-    if (email.length === 0) {
-      setValues({
-        ...values,
-        emailError: true,
-        emailHelper: "Email is required",
-      });
-      return false;
-    }
-
-    if (!validateEmail(email)) {
-      setValues({
-        ...values,
-        emailError: true,
-        emailHelper: "Invalid email",
-      });
-      return false;
-    }
-    if (password.length === 0) {
-      setValues({
-        ...values,
-        passwordError: true,
-        passwordHelper: "Password is required",
-      });
-      return false;
-    }
-  };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (validate() === false) {
+    dispatch(addMessage(TYPES_OF_MESSAGES.SIGNINGUP_USER));
+    setSubmitStatus(true);
+    if (validate(setValues, email, password, values) === false) {
+      setSubmitStatus(false);
+      dispatch(addMessage(TYPES_OF_MESSAGES.SIGNUP_FAILED));
       return;
     }
     dispatch(registerUser({ email, password }))
       .then((status) => {
-        // console.log(status.payload);
+        console.log(status.payload);
         if (status.payload === false) {
           setValues({
             ...values,
             emailError: true,
             emailHelper: "Your email may be taken",
           });
+          dispatch(addMessage(TYPES_OF_MESSAGES.SIGNUP_FAILED));
+          setSubmitStatus(false);
         } else {
-          dispatch(fetchTodos()).then(() => {
-            dispatch(addMessage("Login successful"));
-            navigate("/todolist");
-          });
+          dispatch(addMessage(TYPES_OF_MESSAGES.SIGNUP_SUCCESSFUL));
+          navigate("/");
         }
       })
-      .catch(() =>
+      .catch((errors) => {
+        console.log(errors);
         setValues({
           ...values,
           emailError: true,
           emailHelper: "Your email may be taken",
-        })
-      );
+        });
+        setSubmitStatus(false);
+      });
   };
 
   return (
@@ -153,7 +113,6 @@ function Login() {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
               helperText="Incorrect entry."
               autoFocus
               error={values.emailError}
@@ -172,7 +131,6 @@ function Login() {
               id="password"
               color="primary"
               error={values.passwordError}
-              autoComplete="current-password"
               onChange={(value) => setPassword(event.target.value)}
               type={values.showPassword ? "text" : "password"}
               value={password}
@@ -192,14 +150,17 @@ function Login() {
                 ),
               }}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
+            {!isSubmitting && (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign up
+              </Button>
+            )}
+            {isSubmitting && <LoadingSpinner />}
             <Grid container>
               <Grid item xs></Grid>
               <Grid item>
@@ -215,10 +176,4 @@ function Login() {
   );
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatchSignUpUser: (credentials) => dispatch(signupUser(credentials)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(Login);
+export default Login;

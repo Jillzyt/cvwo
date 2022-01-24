@@ -1,5 +1,5 @@
 // src/App.js
-import * as React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,9 +10,14 @@ import Login from "./views/Login";
 import TodoPage from "./views/TodoPage";
 import NormalRoute from "./components/NormalRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { useDispatch, useSelector } from "react-redux";
+import { Snackbar } from "@mui/material";
+import { clearMessage } from "./features/message/messageSlice";
+import { Alert } from "@mui/material";
+// React app application
 
 // Create color mode context
-function ToggleColorMode() {
+export function ToggleColorMode() {
   const [mode, setMode] = React.useState(
     localStorage.getItem("mode") === "light" ? "light" : "dark"
   );
@@ -98,13 +103,30 @@ function ToggleColorMode() {
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
-// React app application
 function App() {
   const theme = useTheme();
+  const [message, setMessage] = useState(false);
   const colorMode = React.useContext(ColorModeContext);
+  const dispatch = useDispatch();
+  let stateMessage = useSelector((state) => state.message);
+  if (message.message != stateMessage.message && stateMessage.message != null) {
+    setMessage({ message: stateMessage.message, type: stateMessage.type });
+  }
 
   return (
-    <div style={{height:"100%"}}>
+    <div style={{ height: "100%" }}>
+      <Snackbar
+        open={message}
+        autoHideDuration={6000}
+        onClose={() => {
+          dispatch(clearMessage());
+          setMessage(false);
+        }}
+      >
+        <Alert severity={message.type} sx={{ width: "100%" }}>
+          {message.message}
+        </Alert>
+      </Snackbar>
       <CssBaseline /> {/* This is to reset css baseline */}
       <Router>
         <Navbar onClick={colorMode.toggleColorMode} theme={theme} />

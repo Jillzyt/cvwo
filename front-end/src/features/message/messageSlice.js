@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
-  message: "",
+  message: null,
+  type: null,
 };
 
 export const addMessage = createAsyncThunk(
@@ -23,7 +24,11 @@ const messageSlice = createSlice({
   initialState, // Parse the inital states
   extraReducers: (builder) => {
     builder.addCase(addMessage.fulfilled, (state, action) => {
-      state.message = action.payload;
+      state.message = action.payload.message;
+      state.type = action.payload.type;
+    });
+    builder.addCase(clearMessage.fulfilled, (state, action) => {
+      state.message = null;
     });
   },
 });

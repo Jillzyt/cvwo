@@ -1,36 +1,37 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid } from "@mui/material";
-import { TextField } from "@mui/material";
 import { Checkbox } from "@mui/material";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
 import { IconButton } from "@mui/material";
-import Tags from "./TagFilter";
 import {
   deleteTodo,
   todoToggled,
   selectTodoById,
   completeTodo,
 } from "../features/todos/todosSlice";
-import ChipsArray from "./Chip";
+import TagsList from "./TagsList";
 import { Typography } from "@mui/material";
-// Destructure `props.id`, since we just need the ID value
+import { TYPES_OF_MESSAGES } from "../features/message/messagesConstants";
+import { addMessage } from "../features/message/messageSlice";
+
 const Todo = ({ id }) => {
-  // Call our `selectTodoById` with the state _and_ the ID value
   const todo = useSelector((state) => selectTodoById(state, id));
   const { description, status, tag_list } = todo;
   const dispatch = useDispatch();
 
-  const handleCompletedChanged = () => {
-    dispatch(todoToggled(todo.id));
-  };
 
   const onComplete = () => {
+    dispatch(addMessage(TYPES_OF_MESSAGES.UPDATING_STATUS));
     dispatch(completeTodo(todo.id));
+    dispatch(addMessage(TYPES_OF_MESSAGES.UPDATED_STATUS_SUCCESS));
   };
 
   const onDelete = () => {
-    dispatch(deleteTodo(todo.id));
+    dispatch(addMessage(TYPES_OF_MESSAGES.DELETE_TODO_PROCESSING));
+    dispatch(deleteTodo(todo.id)).then(() => {
+      dispatch(addMessage(TYPES_OF_MESSAGES.DELETE_TODO_SUCCESSFUL));
+    });
   };
 
   return (
@@ -47,7 +48,7 @@ const Todo = ({ id }) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={6} lg={6}>
-          {tag_list && <ChipsArray chips={tag_list} />}
+          {tag_list && <TagsList chips={tag_list} />}
           <IconButton onClick={onDelete} sx={{ p: "10px" }} aria-label="search">
             <DeleteOutline color="secondary" />
           </IconButton>

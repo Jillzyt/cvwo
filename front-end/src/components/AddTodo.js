@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { TextField } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { saveNewTodo } from "../features/todos/todosSlice";
-import ChipsArray from "./Chip";
 import { Button } from "@mui/material";
 import { restartState } from "../features/filters/filtersSlice";
 import { Grid } from "@mui/material";
+import { addMessage } from "../features/message/messageSlice";
+import { TYPES_OF_MESSAGES } from "../features/message/messagesConstants";
+
 const AddTodo = () => {
   const [text, setText] = useState("");
   const [tag_list, setTagList] = useState("");
@@ -30,18 +32,19 @@ const AddTodo = () => {
     if (trimmedText) {
       // Create and dispatch the thunk function itself
       setStatus("loading");
+      dispatch(addMessage(TYPES_OF_MESSAGES.ADD_TODO_PROGRESS));
       await dispatch(saveNewTodo(object));
       dispatch(restartState());
       // And clear out the text input
       setText("");
       setTagList("");
+      dispatch(addMessage(TYPES_OF_MESSAGES.ADD_TODO_SUCCESS));
       setStatus("idle");
     }
   };
 
   let isLoading = status === "loading";
   let placeholder = isLoading ? "" : "What needs to be done?";
-  let loader = isLoading ? <div className="loader" /> : null;
 
   return (
     <React.Fragment>
