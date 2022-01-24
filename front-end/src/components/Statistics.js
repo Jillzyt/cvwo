@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-import Chip from "@mui/material/Chip";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
 import { useSelector, useDispatch } from "react-redux";
-import { tagFilterChanged } from "../features/filters/filtersSlice";
 import { Typography } from "@mui/material";
 import moment from "moment";
-import utf8 from "utf8";
+
 export default function Statistics() {
   const todos = useSelector((state) => {
     // This creates a new array reference!
@@ -15,9 +10,6 @@ export default function Statistics() {
     return JSON.parse(JSON.stringify(state.todos.entities));
   });
 
-  console.log(todos);
-  const [chipData, setChipData] = React.useState([]);
-  const dispatch = useDispatch();
   let counter = 0;
 
   for (let todo in todos) {

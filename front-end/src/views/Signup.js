@@ -45,17 +45,6 @@ function Login() {
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
-  if (localStorage.getItem("token")) {
-    useEffect(() => {
-      dispatch(reLoginUser()).then((result) => {
-        if (result.status === true) {
-          // console.log(result);
-          navigate("/todolist");
-        }
-      });
-    });
-  }
-
   const handleClickShowPassword = () => {
     setValues({
       ...values,

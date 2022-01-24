@@ -1,27 +1,34 @@
-# README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
+# Installation and set up for back end application
 
 * Ruby version
+Ruby 3.0.3
 
-* System dependencies
+## Install database tools
+1. Installing PostgreSQL
+2. Set up a database named todo-app with the username: postgres (or you may need to modify the configurations in the database.yml file) 
 
-* Configuration
+## Database set up
+1. Run ```rails db:migrate```
+2. Edit the file in database.yml in the _config folder_ with your updated database credentials for development env
 
-* Database creation
+These are the default configuration:
 
-* Database initialization
+```
+development:
+  <<: *default
+  database: todo-app
+  username: postgres
+  password: 
+  host: localhost
+  port: 5432
+```
 
-* How to run the test suite
+## Install dependencies
+1. Run bundle command to install all the gems dependencies
 
-* Services (job queues, cache servers, search engines, etc.)
+## Migrate database
+1. Run ```rails db:migrate``` command
 
-* Deployment instructions
 
-* ...
-
-Command to start 
-```rails server -p 4000```
+## Start server
+1. Run ```rails server -p {port}``` with port being the port number you want to host the server with
