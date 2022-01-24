@@ -1,4 +1,4 @@
-# Installation and set up for back end application
+# Installation and set up for Ruby on Rails app
 
 * Ruby version
 Ruby 3.0.3
@@ -24,7 +24,7 @@ development:
 ```
 
 ## Install dependencies
-1. Run bundle command to install all the gems dependencies
+1. Run ```bundle``` command to install all the gems dependencies
 
 ## Migrate database
 1. Run ```rails db:migrate``` command
@@ -32,3 +32,6 @@ development:
 
 ## Start server
 1. Run ```rails server -p {port}``` with port being the port number you want to host the server with
+
+## Postman collection
+The [postman collection](https://drive.google.com/file/d/1-_iVWlbOb4GjWMtRCrYq9NmVcbAvpAwk/view?usp=sharing) can be also installed and used to test the api routes.
